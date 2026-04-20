@@ -1,6 +1,7 @@
 library(tidyverse)
 library(readr)
 library(janitor)
+library(dplyr)
 
 students <- read_csv("student_info.csv")
 
@@ -30,9 +31,18 @@ ggplot(research_dist, aes(x = reorder(research_academic_interests, n), y = n)) +
   labs(x = "Research Interest", y = "Count")
 
 #Question 2
+mapping <- c(
+  "Never" = 0,
+  "Rarely" = 1,
+  "Sometimes" = 2,
+  "Often" = 3,
+  "Always" = 4
+)
+
 avg_experience <- students %>%
+  mutate(prog_score = mapping[programming_languages_r_python_julia_etc]) %>%
   group_by(group_number_name) %>%
-  summarise(avg_experience = mean(programming_languages_r_python_julia_etc, na.rm = TRUE))
+  summarise(avg_experience = mean(prog_score, na.rm = TRUE))
 
 avg_experience
 
@@ -55,8 +65,17 @@ lang_counts <- students_lang %>%
 lang_counts
 
 #Question 4
+mapping <- c(
+  "Never" = 0,
+  "Rarely" = 1,
+  "Sometimes" = 2,
+  "Often" = 3,
+  "Always" = 4
+)
+
 experience_by_level <- students %>%
+  mutate(prog_score = mapping[programming_languages_r_python_julia_etc]) %>%
   group_by(year_of_study) %>%
-  summarise(avg_experience = mean(programming_languages_r_python_julia_etc, na.rm = TRUE))
+  summarise(avg_experience = mean(prog_score, na.rm = TRUE))
 
 experience_by_level
