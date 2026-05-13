@@ -30,20 +30,35 @@ ggplot(research_dist, aes(x = reorder(research_academic_interests, n), y = n)) +
   coord_flip() +
   labs(x = "Research Interest", y = "Count")
 
-#Question 2
+#Question 2: avg level of programming experience in each group
 avg_experience <- students %>%
   mutate(
+    level_of_programming_experience_e_g_beginner_intermediate_advanced =
+      str_to_lower(level_of_programming_experience_e_g_beginner_intermediate_advanced),
+    
     prog_score = case_when(
-      str_detect(programming_languages_r_python_julia_etc, "beginner") ~ 1,
-      str_detect(programming_languages_r_python_julia_etc, "intermediate") ~ 2,
-      str_detect(programming_languages_r_python_julia_etc, "advanced") ~ 3,
+      str_detect(level_of_programming_experience_e_g_beginner_intermediate_advanced,
+                 "beginner") ~ 1,
+      
+      str_detect(level_of_programming_experience_e_g_beginner_intermediate_advanced,
+                 "intermediate") ~ 2,
+      
+      str_detect(level_of_programming_experience_e_g_beginner_intermediate_advanced,
+                 "advanced") ~ 3,
+      
       TRUE ~ NA_real_
     )
   ) %>%
   group_by(group_number_name) %>%
-  summarise(avg_experience = mean(prog_score, na.rm = TRUE))
+  summarise(
+    avg_experience = mean(prog_score, na.rm = TRUE),
+    .groups = "drop"
+  )
+avg_experience
 
-#Question 3
+#N/a appears because n/a was typed in the excel sheet and not a valid number
+
+#Question 3: how many people in each group know each program
 students_lang <- students %>%
   mutate(
     knows_r = str_detect(programming_languages_r_python_julia_etc, "\\br\\b"),
@@ -61,15 +76,36 @@ lang_counts <- students_lang %>%
 
 lang_counts
 
-#Question 4
+#n/a appears because it was typed in 'group number' in the survey
+
+#Question 4: do undergrads or grad students have more or less experience
 experience_by_level <- students %>%
   mutate(
     prog_score = case_when(
-      str_detect(programming_languages_r_python_julia_etc, "beginner") ~ 1,
-      str_detect(programming_languages_r_python_julia_etc, "intermediate") ~ 2,
-      str_detect(programming_languages_r_python_julia_etc, "advanced") ~ 3,
+      str_detect(
+        level_of_programming_experience_e_g_beginner_intermediate_advanced,
+        "beginner"
+      ) ~ 1,
+      
+      str_detect(
+        level_of_programming_experience_e_g_beginner_intermediate_advanced,
+        "intermediate"
+      ) ~ 2,
+      
+      str_detect(
+        level_of_programming_experience_e_g_beginner_intermediate_advanced,
+        "advanced"
+      ) ~ 3,
+      
       TRUE ~ NA_real_
     )
   ) %>%
   group_by(year_of_study) %>%
-  summarise(avg_experience = mean(prog_score, na.rm = TRUE))
+  summarise(
+    avg_experience = mean(prog_score, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+experience_by_level
+
+#Na because year of study and programming experience was blank in the spreadsheet
